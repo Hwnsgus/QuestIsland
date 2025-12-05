@@ -33,20 +33,25 @@ public class DialogueManager : MonoBehaviour
 
     void StartDialogue(NPCInteraction npc)
     {
-        // 퀘스트 완료 여부에 따라 다른 대사 사용
         if (npc.quest != null && npc.quest.isCompleted)
         {
             lines = npc.dialogueAfterQuest;
         }
-        else
+        // 2) 퀘스트 아직 시작 전
+        else if (!npc.questGiven)
         {
             lines = npc.dialogueBeforeQuest;
         }
-
+        // 3) 퀘스트 진행 중 (중요!)
+        else
+        {
+            lines = npc.dialogueDuringQuest;
+        }
         index = 0;
         dialoguePanel.SetActive(true);
         dialogueText.text = lines[index];
     }
+
 
     void NextLine()
     {
@@ -60,22 +65,22 @@ public class DialogueManager : MonoBehaviour
         {
             dialoguePanel.SetActive(false);
 
-            // 🔥 대화 종료 시 처리
             if (currentNPC != null)
             {
-                // ⭐ 퀘스트 완료 상태라면 아이콘 숨기기 ONLY
-                if (currentNPC.quest != null && currentNPC.quest.isCompleted)
+                // 케이스 1: 퀘스트 수락 대사 끝난 순간
+                if (!currentNPC.questGiven)
+                {
+                    AcceptQuest(currentNPC);
+                }
+                // 케이스 2: 완료 대사 끝난 순간 → 이때만 아이콘 삭제
+                else if (currentNPC.quest.isCompleted)
                 {
                     currentNPC.questIcon.HideIcon();
-                }
-                else
-                {
-                    // ⭐ 퀘스트 수락 대사일 때만 AcceptQuest 실행
-                    AcceptQuest(currentNPC);
                 }
             }
         }
     }
+
 
 
     public void AcceptQuest(NPCInteraction npc)

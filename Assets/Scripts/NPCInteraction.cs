@@ -5,6 +5,7 @@ public class NPCInteraction : MonoBehaviour
 {
     public string[] dialogueBeforeQuest;  // 대사 여러 줄 저장
     public string[] dialogueAfterQuest;
+    public string[] dialogueDuringQuest;
 
 
 
