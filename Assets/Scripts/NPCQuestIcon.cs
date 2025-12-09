@@ -28,6 +28,7 @@ public class NPCQuestIcon : MonoBehaviour
     {
         currentState = state;
 
+
         switch (state)
         {
             case QuestIconState.Available:
@@ -41,10 +42,8 @@ public class NPCQuestIcon : MonoBehaviour
                 break;
 
             case QuestIconState.Complete:
-                iconImage.gameObject.SetActive(true);
                 iconImage.sprite = iconComplete;
-
-                iconImage.gameObject.SetActive(false);
+                iconImage.gameObject.SetActive(true);
                 break;
 
             case QuestIconState.None:
