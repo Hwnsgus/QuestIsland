@@ -87,14 +87,20 @@ public class DialogueManager : MonoBehaviour
     {
         if (!npc.questGiven)
         {
-            // [중요] ScriptableObject는 게임을 꺼도 데이터가 저장될 수 있으므로
-            // 수락 시점에 초기화해주는 것이 안전합니다.
-            npc.quest.currentKill = 0;
+            // [공통 초기화] 모든 퀘스트가 가지고 있는 변수 초기화
             npc.quest.isCompleted = false;
-
-            // [중요] 퀘스트 매니저가 나중에 완료 아이콘을 띄울 때 누구 머리 위에 띄울지 알아야 합니다.
             npc.quest.ownerNPC = npc;
 
+            // [타입별 초기화] 퀘스트 종류에 따라 다르게 처리
+            if (npc.quest.type == QuestType.Kill)
+            {
+                // npc.quest를 'KillQuest' 모양으로 강제 변환(Casting)해야 currentKill이 보입니다.
+                KillQuest killQ = (KillQuest)npc.quest;
+                killQ.currentKill = 0;
+            }
+            // 만약 ReachQuest에 초기화할 변수가 있다면 여기서 else if로 처리하면 됩니다.
+
+            // 매니저에 등록
             QuestManager.instance.currentQuests.Add(npc.quest);
             npc.questGiven = true;
 

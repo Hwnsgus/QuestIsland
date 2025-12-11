@@ -1,14 +1,16 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Kill Quest", menuName = "Quest/Kill Quest")]
-public class KillQuest : ScriptableObject
+public class KillQuest : QuestBase
 {
-    public string questName;      // 퀘스트 이름
+    // questName, isCompleted, ownerNPC (부모 클래스 변수 사용)
+
     public string targetTag;      // 몬스터 태그
     public int killAmount;        // 목표 킬 수
-
     public int currentKill;       // 현재 잡은 수
-    public bool isCompleted;      // 완료 여부
 
-    public NPCInteraction ownerNPC;
+    void OnEnable()
+    {
+        type = QuestType.Kill;    // 타입 자동 지정
+    }
 }

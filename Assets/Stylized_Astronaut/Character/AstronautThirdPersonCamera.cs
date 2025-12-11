@@ -16,20 +16,20 @@ namespace AstronautThirdPersonCamera
         {
             if (lookAt == null) return;
 
-            // 🔥 카메라 회전 = 플레이어 Yaw + angle
+            //  카메라 회전 = 플레이어 Yaw + angle
             Quaternion rotation = Quaternion.Euler(angle, yaw, 0f);
 
-            // 🔥 플레이어 뒤쪽 방향(offset)
+            // 플레이어 뒤쪽 방향(offset)
             Vector3 offset = rotation * new Vector3(0, 0, -distance);
             offset.y += height;
 
-            // 🔥 카메라 목표 위치 계산
+            //  카메라 목표 위치 계산
             Vector3 desiredPos = lookAt.position + offset;
 
-            // 🔥 자연스럽게 따라가기
+            //  자연스럽게 따라가기
             transform.position = Vector3.Lerp(transform.position, desiredPos, followSpeed * Time.deltaTime);
 
-            // 🔥 플레이어 바라보기
+            //  플레이어 바라보기
             transform.LookAt(lookAt.position + Vector3.up * 1.5f);
         }
     }

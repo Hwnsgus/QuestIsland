@@ -35,7 +35,7 @@ namespace AstronautPlayer
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
 
-            // 🔥 카메라 기준 방향 계산
+            // 카메라 기준 방향 계산
             Vector3 camForward = Camera.main.transform.forward;
             camForward.y = 0;
             camForward.Normalize();
@@ -46,13 +46,13 @@ namespace AstronautPlayer
 
             Vector3 moveDir = camForward * v + camRight * h;
 
-            // 🔥 Shift로 달리기
+            //  Shift로 달리기
             if (Input.GetKey(KeyCode.LeftShift))
                 currentSpeed = runSpeed;
             else
                 currentSpeed = walkSpeed;
 
-            // 🔥 이동 및 회전
+            //  이동 및 회전
             if (moveDir.magnitude > 0.1f)
             {
                 transform.rotation = Quaternion.LookRotation(moveDir);
@@ -64,14 +64,14 @@ namespace AstronautPlayer
                 anim.SetInteger("AnimationPar", 0);
             }
 
-            // 🔥 공격 (C키)
+            //  공격 (C키)
             if (Input.GetKeyDown(KeyCode.C))
             {
                 anim.SetTrigger("Attack");
                 Attack();
             }
 
-            // 🔥 점프
+            //  점프
             if (controller.isGrounded)
             {
                 if (Input.GetKeyDown(KeyCode.Space))
@@ -98,7 +98,7 @@ namespace AstronautPlayer
 
             RaycastHit hit;
 
-            // ⛔ 일단 layerMask 빼고 전체 다 맞게
+            // 일단 layerMask 빼고 전체 다 맞게
             if (Physics.Raycast(origin, transform.forward, out hit, attackRange))
             {
                 Debug.Log("Ray hit: " + hit.collider.name);
