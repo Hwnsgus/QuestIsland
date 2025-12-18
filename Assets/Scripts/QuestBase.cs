@@ -4,7 +4,8 @@ using UnityEngine;
 public enum QuestType
 {
     Kill,
-    Reach
+    Reach,
+    Collect
 }
 
 // 부모 클래스: ScriptableObject 상속

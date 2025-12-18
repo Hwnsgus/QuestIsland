@@ -14,7 +14,7 @@ public class QuestLocation : MonoBehaviour
             QuestManager.instance.LocationReached(targetQuestName);
 
             // 마커는 이제 필요 없으니 끄기
-            gameObject.SetActive(false);
+          //  gameObject.SetActive(false);
         }
     }
 }

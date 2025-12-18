@@ -99,6 +99,11 @@ public class DialogueManager : MonoBehaviour
                 killQ.currentKill = 0;
             }
             // 만약 ReachQuest에 초기화할 변수가 있다면 여기서 else if로 처리하면 됩니다.
+            else if (npc.quest.type == QuestType.Collect)
+            {
+                CollectionQuest collectQ = (CollectionQuest)npc.quest;
+                collectQ.currentAmount = 0;
+            }
 
             // 매니저에 등록
             QuestManager.instance.currentQuests.Add(npc.quest);

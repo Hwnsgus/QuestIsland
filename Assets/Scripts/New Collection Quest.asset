@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0836d0fb239a3544942d78a35449589, type: 3}
+  m_Name: New Collection Quest
+  m_EditorClassIdentifier: Assembly-CSharp::CollectionQuest
+  questName: "\uC7A5\uC791 \uAD6C\uD558\uAE30"
+  type: 2
+  isCompleted: 0
+  ownerNPC: {fileID: 0}
+  targetItemName: "\uC7A5\uC791"
+  requiredAmount: 2
+  currentAmount: 0
