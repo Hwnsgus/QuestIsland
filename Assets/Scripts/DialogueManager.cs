@@ -5,9 +5,11 @@ public class DialogueManager : MonoBehaviour
 {
     public GameObject dialoguePanel;        // UI Panel
     public TextMeshProUGUI dialogueText;    // TMP 텍스트
+    public TextMeshProUGUI nameText;        // NPC 이름 텍스트
     private string[] lines;                 // 지금 출력할 대사
     private int index = 0;
     private NPCInteraction currentNPC;
+    private bool isReadyToFinish = false;
 
     void Update()
     {
@@ -33,6 +35,13 @@ public class DialogueManager : MonoBehaviour
 
     void StartDialogue(NPCInteraction npc)
     {
+        isReadyToFinish = false; // 대화 시작할 때 초기화
+
+        if (nameText != null)
+        {
+            nameText.text = npc.npcName;
+        }
+
         if (npc.quest != null && npc.quest.isCompleted)
         {
             lines = npc.dialogueAfterQuest;
@@ -43,10 +52,30 @@ public class DialogueManager : MonoBehaviour
             lines = npc.dialogueBeforeQuest;
         }
         // 3) 퀘스트 진행 중 (중요!)
-        else
+        else if (npc.questGiven && npc.quest != null)
         {
-            lines = npc.dialogueDuringQuest;
+            // ▼ [추가] 혹시 수집 퀘스트이고, 물건을 다 모아왔는지 체크?
+            if (npc.quest.type == QuestType.Collect)
+            {
+                CollectionQuest cQuest = (CollectionQuest)npc.quest;
+                if (cQuest.currentAmount >= cQuest.requiredAmount)
+                {
+                    // 다 모아왔으면 '완료 후 대사'를 미리 보여줌!
+                    lines = npc.dialogueAfterQuest;
+                    isReadyToFinish = true; // "대화 끝나면 퀘스트 완료 처리해야지"라고 표시
+                }
+                else
+                {
+                    lines = npc.dialogueDuringQuest; // 아직 덜 모음
+                }
+            }
+            // (사냥 퀘스트도 비슷하게 처리 가능)
+            else
+            {
+                lines = npc.dialogueDuringQuest;
+            }
         }
+
         index = 0;
         dialoguePanel.SetActive(true);
         dialogueText.text = lines[index];
@@ -76,6 +105,11 @@ public class DialogueManager : MonoBehaviour
                 else if (currentNPC.quest.isCompleted)
                 {
                     currentNPC.questIcon.HideIcon();
+                }
+
+                else if (isReadyToFinish)
+                {
+                    QuestManager.instance.CompleteQuest(currentNPC.quest);
                 }
             }
         }
@@ -110,6 +144,7 @@ public class DialogueManager : MonoBehaviour
             npc.questGiven = true;
 
             npc.questIcon.UpdateIcon(QuestIconState.InProgress);   // 아이콘 변경!
+            QuestManager.instance.UpdateQuestUI(); // 퀘스트 진행상황 UI 갱신
         }
     }
 
