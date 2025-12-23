@@ -9,7 +9,10 @@ public class QuestManager : MonoBehaviour
 
     // [변경] KillQuest -> QuestBase (모든 퀘스트 관리)
     public List<QuestBase> currentQuests = new List<QuestBase>();
-    public TextMeshProUGUI questProgressText; // 퀘스트 진행도 UI 텍스트
+
+    [Header("UI 설정")]
+    public Transform questListContent;  // 아까 만든 QuestContainer 연결
+    public GameObject questSlotPrefab;  // 아까 만든 QuestSlot 프리팹 연결
 
     void Awake()
     {
@@ -17,49 +20,32 @@ public class QuestManager : MonoBehaviour
     }
 
     // [수정] 매개변수(QuestBase quest)를 없애고, 리스트 전체를 출력하도록 변경
+    // [완전히 바뀐 코드]
     public void UpdateQuestUI()
     {
-        if (questProgressText == null) return;
+        // 1. 기존에 떠 있던 슬롯들을 삭제
+        // (이걸 안 하면 업데이트할 때마다 목록이 계속 쌓입니다)
+        foreach (Transform child in questListContent)
+        {
+            Destroy(child.gameObject);
+        }
 
-        // 1. 텍스트를 깨끗이 비웁니다.
-        questProgressText.text = "";
-
-        // 2. 현재 받은 퀘스트 리스트를 하나씩 돕니다.
+        // 2. 현재 퀘스트 리스트를 돌면서 슬롯을 하나씩 '생성'합니다.
         foreach (var quest in currentQuests)
         {
-            // (선택) 이미 완료된 퀘스트는 목록에서 빼고 싶다면 아래 주석 해제
-            // if (quest.isCompleted) continue;
+            // (선택) 완료된 퀘스트 숨기기
+            if (quest.isCompleted) continue; 
 
-            string content = "";
+            // 프리팹 생성! (위치는 questListContent 아래로)
+            GameObject newSlot = Instantiate(questSlotPrefab, questListContent);
 
-            // 3. 타입별로 내용 만들기
-            if (quest.type == QuestType.Collect)
-            {
-                CollectionQuest cq = (CollectionQuest)quest;
-                if (cq.currentAmount >= cq.requiredAmount)
-                    content = $"{cq.questName} (완료!)";
-                else
-                    content = $"{cq.questName}: {cq.currentAmount} / {cq.requiredAmount}";
-            }
-            else if (quest.type == QuestType.Kill)
-            {
-                KillQuest kq = (KillQuest)quest;
-                if (kq.currentKill >= kq.killAmount)
-                    content = $"{kq.questName} (완료!)";
-                else
-                    content = $"{kq.questName}: {kq.currentKill} / {kq.killAmount}";
-            }
-            else if (quest.type == QuestType.Reach)
-            {
-                // 도착 퀘스트
-                if (quest.isCompleted)
-                    content = $"{quest.questName} (완료!)";
-                else
-                    content = $"{quest.questName}: 위치로 이동하세요";
-            }
+            // 생성된 슬롯의 스크립트를 가져와서 내용 채우기
+            QuestSlotUI slotScript = newSlot.GetComponent<QuestSlotUI>();
 
-            // 4. 기존 텍스트 뒤에 내용을 이어 붙입니다 (+줄바꿈)
-            questProgressText.text += content + "\n";
+            if (slotScript != null)
+            {
+                slotScript.Setup(quest);
+            }
         }
     }
 
@@ -76,9 +62,19 @@ public class QuestManager : MonoBehaviour
                 if (killQ.targetTag == tag)
                 {
                     killQ.currentKill++;
+                    UpdateQuestUI(); // 카운트 올라가게 갱신
+
+                    // 목표 달성 확인
                     if (killQ.currentKill >= killQ.killAmount)
                     {
-                        CompleteQuest(killQ);
+                        // [수정 2] 목표 달성 시, NPC 아이콘을 즉시 '완료(파란색)'로 변경
+                        if (quest.ownerNPC != null)
+                        {
+                            quest.ownerNPC.questIcon.UpdateIcon(QuestIconState.Complete);
+                        }
+
+                        // UI 갱신 (완료 메시지 띄우기 위해)
+                        UpdateQuestUI();
                     }
                 }
             }
@@ -117,21 +113,18 @@ public class QuestManager : MonoBehaviour
                 if (collectQ.targetItemName == itemName)
                 {
                     collectQ.currentAmount++;
-                    UpdateQuestUI(); // UI 갱신
                     Debug.Log($"수집 진행도: {collectQ.currentAmount}/{collectQ.requiredAmount}");
+                    UpdateQuestUI();
 
-                    // 목표 달성 시 완료 처리
                     if (collectQ.currentAmount >= collectQ.requiredAmount)
                     {
-                        if (questProgressText != null)
+                        // [수정 2] 목표 달성 시, NPC 아이콘을 즉시 '완료(파란색)'로 변경
+                        if (quest.ownerNPC != null)
                         {
-                            questProgressText.text = $"{collectQ.questName}\n완료! {quest.ownerNPC.npcName}에게 돌아가세요.";
-                            Debug.Log("수집 퀘스트 완료!");
+                            quest.ownerNPC.questIcon.UpdateIcon(QuestIconState.Complete);
                         }
-                        else
-                        {
-                            CompleteQuest(collectQ);
-                        }
+
+                        UpdateQuestUI();
                     }
                 }
             }
@@ -141,22 +134,17 @@ public class QuestManager : MonoBehaviour
 
 
     // [추가] 퀘스트 완료 시 텍스트 지우기
-    public void ClearQuestUI()
-    {
-        if (questProgressText != null)
-            questProgressText.text = "";
-    }
-
     // 중복되는 완료 코드를 함수로 정리
     public void CompleteQuest(QuestBase quest)
     {
         quest.isCompleted = true;
+
         if (quest.ownerNPC != null)
         {
             quest.ownerNPC.questIcon.UpdateIcon(QuestIconState.Complete);
         }
 
-        ClearQuestUI();
+        UpdateQuestUI();
     }
 }
 

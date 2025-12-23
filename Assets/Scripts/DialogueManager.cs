@@ -54,22 +54,37 @@ public class DialogueManager : MonoBehaviour
         // 3) 퀘스트 진행 중 (중요!)
         else if (npc.questGiven && npc.quest != null)
         {
-            // ▼ [추가] 혹시 수집 퀘스트이고, 물건을 다 모아왔는지 체크?
+            // 혹시 수집 퀘스트이고, 물건을 다 모아왔는지 체크
             if (npc.quest.type == QuestType.Collect)
             {
                 CollectionQuest cQuest = (CollectionQuest)npc.quest;
                 if (cQuest.currentAmount >= cQuest.requiredAmount)
                 {
-                    // 다 모아왔으면 '완료 후 대사'를 미리 보여줌!
+                    // 다 모아왔으면 '완료 후 대사'를 미리 보여줌
                     lines = npc.dialogueAfterQuest;
-                    isReadyToFinish = true; // "대화 끝나면 퀘스트 완료 처리해야지"라고 표시
+                    isReadyToFinish = true; // 대화 끝나면 퀘스트 완료 처리
                 }
                 else
                 {
                     lines = npc.dialogueDuringQuest; // 아직 덜 모음
                 }
             }
-            // (사냥 퀘스트도 비슷하게 처리 가능)
+            else if (npc.quest.type == QuestType.Kill)
+            {
+                KillQuest kQuest = (KillQuest)npc.quest;
+
+                // 현재 잡은 수(currentKill)가 목표(killAmount)보다 많거나 같으면?
+                if (kQuest.currentKill >= kQuest.killAmount)
+                {
+                    lines = npc.dialogueAfterQuest; // (완료 대사)
+                    isReadyToFinish = true;         // 대화 끝나면 퀘스트 완료시키기
+                }
+                else
+                {
+                    lines = npc.dialogueDuringQuest; // "더 잡고 와라"
+                }
+            }
+
             else
             {
                 lines = npc.dialogueDuringQuest;
@@ -78,7 +93,8 @@ public class DialogueManager : MonoBehaviour
 
         index = 0;
         dialoguePanel.SetActive(true);
-        dialogueText.text = lines[index];
+        if (lines != null && lines.Length > 0)
+            dialogueText.text = lines[index];
     }
 
 
@@ -86,7 +102,7 @@ public class DialogueManager : MonoBehaviour
     {
         index++;
 
-        if (index < lines.Length)
+        if (lines != null && index < lines.Length)
         {
             dialogueText.text = lines[index];
         }
@@ -96,20 +112,44 @@ public class DialogueManager : MonoBehaviour
 
             if (currentNPC != null)
             {
+                // 퀘스트가 아예 없는 NPC(단순 대화 NPC)라면 여기서 중단
+                if (currentNPC.quest == null)
+                {
+                    // 퀘스트가 없으니 그냥 대화만 닫고 끝냄
+                    return;
+                }
+
                 // 케이스 1: 퀘스트 수락 대사 끝난 순간
                 if (!currentNPC.questGiven)
                 {
                     AcceptQuest(currentNPC);
                 }
-                // 케이스 2: 완료 대사 끝난 순간 → 이때만 아이콘 삭제
-                else if (currentNPC.quest.isCompleted)
+                // 케이스 2: 완료 대사 끝난 순간
+                // currentNPC.quest가 null인지 먼저 확인
+                else if (currentNPC.quest != null && currentNPC.quest.isCompleted)
                 {
-                    currentNPC.questIcon.HideIcon();
+                    // [안전장치 2] 아이콘이 연결 안 되어 있을 수도 있으니 확인
+                    if (currentNPC.questIcon != null)
+                        currentNPC.questIcon.HideIcon();
                 }
-
+                // 케이스 3: 수집 퀘스트 완료 보고
                 else if (isReadyToFinish)
                 {
+                    // 안전장치
+                    if (QuestManager.instance == null)
+                    {
+                        Debug.LogError("오류: 씬에 QuestManager가 없습니다!");
+                        return;
+                    }
+
+                    if (currentNPC.quest == null)
+                    {
+                        Debug.LogError($"오류: {currentNPC.npcName}에게 퀘스트 파일이 연결되지 않았습니다!");
+                        return;
+                    }
+
                     QuestManager.instance.CompleteQuest(currentNPC.quest);
+                    isReadyToFinish = false;
                 }
             }
         }
