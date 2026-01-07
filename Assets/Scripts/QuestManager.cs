@@ -7,7 +7,7 @@ public class QuestManager : MonoBehaviour
 {
     public static QuestManager instance;
 
-    // [변경] KillQuest -> QuestBase (모든 퀘스트 관리)
+    // KillQuest -> QuestBase (모든 퀘스트 관리)
     public List<QuestBase> currentQuests = new List<QuestBase>();
 
     [Header("UI 설정")]
@@ -19,24 +19,22 @@ public class QuestManager : MonoBehaviour
         instance = this;
     }
 
-    // [수정] 매개변수(QuestBase quest)를 없애고, 리스트 전체를 출력하도록 변경
-    // [완전히 바뀐 코드]
+    // 매개변수(QuestBase quest)를 없애고, 리스트 전체를 출력하도록 변경
     public void UpdateQuestUI()
     {
         // 1. 기존에 떠 있던 슬롯들을 삭제
-        // (이걸 안 하면 업데이트할 때마다 목록이 계속 쌓입니다)
         foreach (Transform child in questListContent)
         {
             Destroy(child.gameObject);
         }
 
-        // 2. 현재 퀘스트 리스트를 돌면서 슬롯을 하나씩 '생성'합니다.
+        // 2. 현재 퀘스트 리스트를 돌면서 슬롯을 하나씩 생성
         foreach (var quest in currentQuests)
         {
             // (선택) 완료된 퀘스트 숨기기
             if (quest.isCompleted) continue; 
 
-            // 프리팹 생성! (위치는 questListContent 아래로)
+            // 프리팹 생성 
             GameObject newSlot = Instantiate(questSlotPrefab, questListContent);
 
             // 생성된 슬롯의 스크립트를 가져와서 내용 채우기
@@ -67,7 +65,7 @@ public class QuestManager : MonoBehaviour
                     // 목표 달성 확인
                     if (killQ.currentKill >= killQ.killAmount)
                     {
-                        // [수정 2] 목표 달성 시, NPC 아이콘을 즉시 '완료(파란색)'로 변경
+                        //  목표 달성 시, NPC 아이콘을 즉시 '완료(파란색)'로 변경
                         if (quest.ownerNPC != null)
                         {
                             quest.ownerNPC.questIcon.UpdateIcon(QuestIconState.Complete);
