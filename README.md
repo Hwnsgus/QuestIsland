@@ -118,11 +118,6 @@ public void MonsterKilled(string tag)
         }
     }
 }
+Developer: 황준현
 
-'''
-
-
-
-Developer: [황준현]
-
-Contact: [h010617@naver.com]
+Contact: h010617@naver.com
