@@ -7,7 +7,7 @@
 ## 📸 Project Overview
 
 <div align="center">
-  <img src="Images/주무대.jpg" alt="Game World Overview" width="100%">
+  <img src="Images/주무대.png" alt="Game World Overview" width="100%">
   <p><em>▲ 다양한 NPC와 상호작용하며 퀘스트를 수행하는 오픈월드 맵 전경</em></p>
 </div>
 
@@ -48,7 +48,7 @@
 플레이어가 NPC에게 접근하여 대화를 나누고 퀘스트를 수락하는 과정입니다. `DialogueManager`가 NPC의 퀘스트 보유 여부와 진행 상태를 판단하여 적절한 대사를 출력합니다.
 
 <div align="center">
-  <img src="Images/퀘스트.jpg" alt="Quest Accept 1" width="48%">
+  <img src="Images/퀘스트.png" alt="Quest Accept 1" width="48%">
   <img src="Images/image_a0b669.png" alt="Quest Accept 2" width="48%">
 </div>
 
@@ -62,8 +62,8 @@
 * **Collect Quest:** 특정 아이템 수집
 
 <div align="center">
-  <img src="Images/미션진행.jpg" alt="Mission Progress" width="48%">
-  <img src="Images/퀘스트2.jpg" alt="Reach Mission" width="48%">
+  <img src="Images/미션진행.png" alt="Mission Progress" width="48%">
+  <img src="Images/퀘스트2.png" alt="Reach Mission" width="48%">
 </div>
 
 <br>
@@ -72,8 +72,8 @@
 목표를 달성한 후 NPC에게 돌아오면, 완료 대사가 출력되며 퀘스트가 종료됩니다. `isCompleted` 플래그가 활성화되어 중복 수행을 방지합니다.
 
 <div align="center">
-  <img src="Images/퀘스트3.jpg" alt="Return to NPC" width="48%">
-  <img src="Images/퀘스트완료.jpg" alt="Quest Complete" width="48%">
+  <img src="Images/퀘스트3.png" alt="Return to NPC" width="48%">
+  <img src="Images/퀘스트완료.png" alt="Quest Complete" width="48%">
 </div>
 
 <br>
@@ -119,7 +119,9 @@ public void MonsterKilled(string tag)
     }
 }
 
----
+'''
+
+
 
 Developer: [황준현]
 
