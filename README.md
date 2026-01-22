@@ -49,7 +49,7 @@
 
 <div align="center">
   <img src="Images/퀘스트.png" alt="Quest Accept 1" width="48%">
-  <img src="Images/image_a0b669.png" alt="Quest Accept 2" width="48%">
+  <img src="Images/퀘스트2.png" alt="Quest Accept 2" width="48%">
 </div>
 
 <br>
@@ -63,7 +63,6 @@
 
 <div align="center">
   <img src="Images/미션진행.png" alt="Mission Progress" width="48%">
-  <img src="Images/퀘스트2.png" alt="Reach Mission" width="48%">
 </div>
 
 <br>
