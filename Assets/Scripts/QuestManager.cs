@@ -131,7 +131,7 @@ public class QuestManager : MonoBehaviour
 
 
 
-    // [추가] 퀘스트 완료 시 텍스트 지우기
+    // 퀘스트 완료 시 텍스트 지우기
     // 중복되는 완료 코드를 함수로 정리
     public void CompleteQuest(QuestBase quest)
     {
