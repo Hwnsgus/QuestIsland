@@ -34,7 +34,7 @@
 </div>
 
 ### 🏗️ Design Highlights
-* **ScriptableObject 기반 데이터 설계:** `QuestBase`를 상속받아 `Kill`, `Collect`, `Reach` 등 새로운 퀘스트 타입을 코드 수정 없이 확장할 수 있습니다.
+* **ScriptableObject 기반 데이터 설계:** `QuestBase`를 상속받아 `Kill`, `Collect`, `Reach` 등 새로운 퀘스트 타입을 코드 수정 없이 확장할 수 있도록 구현했습니다.
 * **중앙 집중식 관리 (Core Managers):**
     * `QuestManager`: 모든 퀘스트의 진행 상태(Progress) 및 완료 이벤트를 중앙에서 관리합니다.
     * `DialogueManager`: NPC와의 대화 흐름을 제어하고, 퀘스트 수락/완료 시점과 연동됩니다.
