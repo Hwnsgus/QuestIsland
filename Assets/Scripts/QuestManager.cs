@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -13,6 +14,12 @@ public class QuestManager : MonoBehaviour
     [Header("UI 설정")]
     public Transform questListContent;  // 아까 만든 QuestContainer 연결
     public GameObject questSlotPrefab;  // 아까 만든 QuestSlot 프리팹 연결
+
+    [Header("엔딩 설정")]
+    [Tooltip("씬에 배치된 퀘스트를 모두 완료했을 때 엔딩을 표시합니다.")]
+    public bool showEndingWhenAllQuestsComplete = true;
+
+    private bool endingShown;
 
     void Awake()
     {
@@ -135,6 +142,8 @@ public class QuestManager : MonoBehaviour
     // 중복되는 완료 코드를 함수로 정리
     public void CompleteQuest(QuestBase quest)
     {
+        if (quest == null || quest.isCompleted) return;
+
         quest.isCompleted = true;
 
         if (quest.ownerNPC != null)
@@ -143,6 +152,27 @@ public class QuestManager : MonoBehaviour
         }
 
         UpdateQuestUI();
+        CheckForEnding();
+    }
+
+    private void CheckForEnding()
+    {
+        if (!showEndingWhenAllQuestsComplete || endingShown) return;
+
+        // 받은 퀘스트만 검사하면 첫 퀘스트 직후 엔딩이 나올 수 있어
+        // 씬의 NPC가 가진 전체 퀘스트를 기준으로 검사합니다.
+        QuestBase[] allQuests = FindObjectsByType<NPCInteraction>(FindObjectsSortMode.None)
+            .Where(npc => npc.quest != null)
+            .Select(npc => npc.quest)
+            .Distinct()
+            .ToArray();
+
+        if (allQuests.Length == 0 || allQuests.Any(item => !item.isCompleted)) return;
+
+        endingShown = true;
+        EndingUIController.Show(allQuests.Length);
     }
 }
+
+
 
